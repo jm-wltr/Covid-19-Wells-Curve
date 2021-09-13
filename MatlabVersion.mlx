@@ -1,0 +1,39 @@
+h=1.4; %height in m
+mua =18*10^-6; %viscosity of air in kg/(m*s)
+rho = 997; %density of water in kg/m^3
+g = 9.81;
+D = 0.000000002;
+RH = 0.95;
+
+%% Calculate
+fracts = (9*h*mua)/(2*rho*g);
+fracte = (D*(1-RH))^-1;
+
+Rsol = ((9*h*mua*D*(1-RH))/(2*rho*g))^(1/4);
+tsol = (fracts) * (Rsol^-2);
+
+R = linspace(4*10^-6,0.0003, 300);
+ts = fracts * (R.^-2);
+te = (R.^2)*fracte;
+
+%Ideal particle
+idealt = zeros(size(R))+(2*g*h)^(1/2)/g
+
+%% Plot
+R = R.*10^6;
+plot(R(R./10^6<=Rsol),ts(ts>=tsol), "r--", "Linewidth", 1.5)
+hold on
+plot(R(R./10^6>=Rsol),ts(ts<=tsol), "r-", "Linewidth", 1.5)
+hold on
+plot(R(R./10^6>=Rsol),te(te>=tsol), "b--", "Linewidth", 1.5)
+hold on
+plot(R(R./10^6<=Rsol),te(te<=tsol), "b-", "Linewidth", 1.5)
+plot(R, idealt)
+set(gca, 'YDir','reverse','XAxisLocation', 'top')
+xlabel("Droplet radius(μm)")
+ylabel("Time (s)")
+xlim([0 300]);
+ylim([0 10]);
+legend("","Settling curve", "", "Evaporation curve", "Ideal particle", "Location","southeast")
+
+hold off
