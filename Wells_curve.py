@@ -28,6 +28,9 @@ fig = plt.figure()
 ax = fig.add_subplot(111, title="Wells Curve")
 
 def calculate(h, mua, rho, g, D, RH):
+    ax.clear()
+    ax.set_title("Wells Curve")
+    
     fracts = (9*h*mua)/(2*rho*g)
     fracte = (D*(1-RH))**(-1)
     
@@ -94,16 +97,8 @@ def update(val):
     D = 0.000000002
     
     calculate(h,mua,rho,g,D,RH)
-    # results = calculate(h, mua, rho, g, D, RH)
-    # R = results[0]
-    # Rsol = results[1]
-    # ts = results[2]
-    # te = results[3]
-    # tsol = results[4]
-    # idealt = results[5]
-    
-    
     
 h_slider.on_changed(update)
 mua_slider.on_changed(update)
 RH_slider.on_changed(update)
+
