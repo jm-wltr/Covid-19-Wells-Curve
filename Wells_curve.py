@@ -17,12 +17,15 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 
 #Set variables
-h = 1.4 # height in m
+h = 1.8 # height in m
 mua = 18*10**(-6) # viscosity of air in kg/(m*s)
 rho = 997 # density of water in kg/m^3
 g = 9.81
 D = 0.000000002
-RH = 0.95
+RH = 0.4
+
+fig = plt.figure()
+ax = fig.add_subplot(111, title="Wells Curve")
 
 def calculate(h, mua, rho, g, D, RH):
     fracts = (9*h*mua)/(2*rho*g)
@@ -37,38 +40,27 @@ def calculate(h, mua, rho, g, D, RH):
     
     idealt = np.zeros(len(R))+(2*g*h)**(1/2)/g
     
-    return R, Rsol, ts, te, tsol, idealt
+    R = R*10**6
+    ax.plot(np.extract(R/10**6 <= Rsol, R), np.extract(ts >= tsol, ts), "r--", linewidth = 1.5, label="_nolegend_")
+    ax.plot(np.extract(R/10**6 >= Rsol, R), np.extract(ts <= tsol, ts), "r-", linewidth = 1.5)
+    ax.plot(np.extract(R/10**6 >= Rsol, R), np.extract(te >= tsol, te), "b--", linewidth = 1.5, label="_nolegend_")
+    ax.plot(np.extract(R/10**6 <= Rsol, R), np.extract(te <= tsol, te), "b-", linewidth = 1.5)
+    ax.plot(R, idealt, "y:")
+    
+    ax.xaxis.tick_top()
+    
+    
+    ax.set_xlabel("Droplet radius(μm)")
+    ax.set_ylabel("Time (s)")
+    
+    ax.set_xlim((0, 300))
+    ax.set_ylim((10, 0))
+    
+    ax.legend(["Settling curve", "Evaportaion curve", "Ideal particle"])
+    
+    plt.subplots_adjust(bottom=0.25)
 
-results = calculate(h, mua, rho, g, D, RH)
-R = results[0]
-Rsol = results[1]
-ts = results[2]
-te = results[3]
-tsol = results[4]
-idealt = results[5]
-print(tsol)
-
-R = R*10**6
-plt.plot(np.extract(R/10**6 <= Rsol, R), np.extract(ts >= tsol, ts), "r--", linewidth = 1.5, label="_nolegend_")
-plt.plot(np.extract(R/10**6 >= Rsol, R), np.extract(ts <= tsol, ts), "r-", linewidth = 1.5)
-plt.plot(np.extract(R/10**6 >= Rsol, R), np.extract(te >= tsol, te), "b--", linewidth = 1.5, label="_nolegend_")
-plt.plot(np.extract(R/10**6 <= Rsol, R), np.extract(te <= tsol, te), "b-", linewidth = 1.5)
-plt.plot(R, idealt, "y:")
-
-plt.gca().invert_yaxis()
-plt.gca().xaxis.tick_top()
-
-
-plt.gca().set_xlabel("Droplet radius(μm)")
-plt.gca().set_ylabel("Time (s)")
-
-plt.xlim((0, 300))
-plt.ylim((10, 0))
-
-plt.legend(["Settling curve", "Evaportaion curve", "Ideal particle"])
-
-plt.subplots_adjust(bottom=0.25)
-
+calculate(h, mua, rho, g, D, RH)
 axh = plt.axes([0.19, 0.15, 0.65, 0.03], facecolor="lightgoldenrodyellow")
 h_slider = Slider(
     ax = axh,
@@ -101,18 +93,17 @@ def update(val):
     g = 9.81
     D = 0.000000002
     
-    results = calculate(h, mua, rho, g, D, RH)
-    R = results[0]
-    Rsol = results[1]
-    ts = results[2]
-    te = results[3]
-    tsol = results[4]
-    idealt = results[5]
+    calculate(h,mua,rho,g,D,RH)
+    # results = calculate(h, mua, rho, g, D, RH)
+    # R = results[0]
+    # Rsol = results[1]
+    # ts = results[2]
+    # te = results[3]
+    # tsol = results[4]
+    # idealt = results[5]
     
     
     
 h_slider.on_changed(update)
 mua_slider.on_changed(update)
 RH_slider.on_changed(update)
-
-
