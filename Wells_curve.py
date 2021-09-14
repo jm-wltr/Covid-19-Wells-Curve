@@ -16,7 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 
-#Set variables
+## Set initial variables
 h = 1.8 # height in m
 mua = 18*10**(-6) # viscosity of air in kg/(m*s)
 rho = 997 # density of water in kg/m^3
@@ -24,13 +24,16 @@ g = 9.81
 D = 0.000000002
 RH = 0.4
 
+## Create figure
 fig = plt.figure()
 ax = fig.add_subplot(111, title="Wells Curve")
 
+## Function that generates and plots the curve.
 def calculate(h, mua, rho, g, D, RH):
     ax.clear()
     ax.set_title("Wells Curve")
     
+    # Calculate
     fracts = (9*h*mua)/(2*rho*g)
     fracte = (D*(1-RH))**(-1)
     
@@ -43,6 +46,7 @@ def calculate(h, mua, rho, g, D, RH):
     
     idealt = np.zeros(len(R))+(2*g*h)**(1/2)/g
     
+    # Graph
     R = R*10**6
     ax.plot(np.extract(R/10**6 <= Rsol, R), np.extract(ts >= tsol, ts), "r--", linewidth = 1.5, label="_nolegend_")
     ax.plot(np.extract(R/10**6 >= Rsol, R), np.extract(ts <= tsol, ts), "r-", linewidth = 1.5)
@@ -51,7 +55,6 @@ def calculate(h, mua, rho, g, D, RH):
     ax.plot(R, idealt, "y:")
     
     ax.xaxis.tick_top()
-    
     
     ax.set_xlabel("Droplet radius(μm)")
     ax.set_ylabel("Time (s)")
@@ -64,6 +67,8 @@ def calculate(h, mua, rho, g, D, RH):
     plt.subplots_adjust(bottom=0.25)
 
 calculate(h, mua, rho, g, D, RH)
+
+#Create sliders
 axh = plt.axes([0.19, 0.15, 0.65, 0.03], facecolor="lightgoldenrodyellow")
 h_slider = Slider(
     ax = axh,
@@ -88,17 +93,19 @@ RH_slider = Slider(
     valmax=0.99,
     valinit=0.4)
 
+## Function that is called whenever sliders are changed.
 def update(val):
     h = h_slider.val
     mua = mua_slider.val
     RH = RH_slider.val
+    
     rho = 997 # density of water in kg/m^3
     g = 9.81
     D = 0.000000002
     
     calculate(h,mua,rho,g,D,RH)
-    
+
+## Detect when sliders change 
 h_slider.on_changed(update)
 mua_slider.on_changed(update)
 RH_slider.on_changed(update)
-
