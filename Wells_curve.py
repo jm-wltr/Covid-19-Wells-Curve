@@ -109,3 +109,5 @@ def update(val):
 h_slider.on_changed(update)
 mua_slider.on_changed(update)
 RH_slider.on_changed(update)
+
+plt.show()
